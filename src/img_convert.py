@@ -1,11 +1,20 @@
 import numpy as np
 import cv2
 
-def insert_bg(image, bg, polygon, h, w):
-    # polygon=np.array([
-    #         [int(x*w),int(y*h)]
-    #         for (x, y) in polygon
-    #     ])
+def insert_bg(image: np.ndarray, bg: np.ndarray, polygon: list, h: int, w: int):
+    """
+    Inserts the foreground image onto the background image within the specified polygon region.
+
+    Args:
+        image (numpy.ndarray): Foreground image.
+        bg (numpy.ndarray): Background image.
+        polygon (list): List of polygon vertices [(x1, y1), (x2, y2), ...].
+        h (int): Height of the output image.
+        w (int): Width of the output image.
+
+    Returns:
+        numpy.ndarray: Output image with the foreground inserted in the specified region.
+    """
     polygon=np.array([
             [int(x),int(y)]
             for (x, y) in polygon
@@ -21,7 +30,20 @@ def insert_bg(image, bg, polygon, h, w):
 
     return only_object+bg
 
-def translate_image(image_path, old_polygon, new_polygon, w, h):
+def translate_image(image_path: str, old_polygon: list, new_polygon: list, w: int, h: int):
+    """
+    Translates the input image and its polygon region to a new position and scale.
+
+    Args:
+        image_path (str): Path to the input image.
+        old_polygon (list): List of polygon vertices in the input image [(x1, y1), (x2, y2), ...].
+        new_polygon (list): List of polygon vertices in the output image [(x1, y1), (x2, y2), ...].
+        w (int): Width of the output image.
+        h (int): Height of the output image.
+
+    Returns:
+        tuple: A tuple containing the translated image and the updated polygon in the output image.
+    """
     image1 = cv2.cvtColor(cv2.imread(image_path), cv2.COLOR_BGR2RGB)
     h1, w1, _ = image1.shape
     old_polygon = np.array([[point[0]/w1*w, point[1]/h1*h] for point in old_polygon]).astype(np.int32)

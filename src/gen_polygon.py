@@ -6,6 +6,15 @@ import random
 from shapely.geometry import Polygon
 
 def polygon_size(polygon: np.ndarray):
+    """
+    Calculate the width and height of a polygon.
+
+    Args:
+        polygon (numpy.ndarray): Array representing the polygon vertices.
+
+    Returns:
+        tuple: Width and height of the polygon.
+    """
     x_coordinates = polygon[:, 0]  # Extract the x-coordinates from the polygon vertices
     y_coordinates = polygon[:, 1]  # Extract the y-coordinates from the polygon vertices
 
@@ -15,6 +24,16 @@ def polygon_size(polygon: np.ndarray):
 
     return width, height
 def poly_intersect(poly1, poly2):
+    """
+    Check if two polygons intersect.
+
+    Args:
+        poly1 (list): List of vertices of the first polygon.
+        poly2 (list): List of vertices of the second polygon.
+
+    Returns:
+        bool: True if the polygons intersect, False otherwise.
+    """
     shapely_polygon1 = Polygon(poly1)
     shapely_polygon2 = Polygon(poly2)
 
@@ -22,12 +41,35 @@ def poly_intersect(poly1, poly2):
     if shapely_polygon1.intersects(shapely_polygon2):
         return True
     return False
+
 def polygon_move(polygon: np.ndarray, move_x: float, move_y: float):
+    """
+    Move a polygon by a given displacement.
+    Args:
+        polygon (numpy.ndarray): Array representing the polygon vertices.
+        move_x (float): Amount to move in the x-axis.
+        move_y (float): Amount to move in the y-axis.
+
+    Returns:
+        numpy.ndarray: Array representing the moved polygon.
+    """
     polygon[:, 0] += move_x
     polygon[:, 1] += move_y
     return polygon
 
 def gen_polygon(polygon: list, new_polygon_list: list[np.ndarray], w: int, h: int) -> np.ndarray:
+    """
+    Generate a new polygon by randomly positioning the input polygon within the specified dimensions.
+
+    Args:
+        polygon (list): List of vertices of the input polygon.
+        new_polygon_list (list[numpy.ndarray]): List of existing polygons in the new image.
+        w (int): Width of the new image.
+        h (int): Height of the new image.
+
+    Returns:
+        numpy.ndarray or False: New polygon if generated successfully, False otherwise.
+    """
     polygon = np.array(polygon, dtype= "float32")
     polygon = polygon_move(polygon, -np.min(polygon[:, 0]), -np.min(polygon[:, 1]))
 
@@ -64,6 +106,18 @@ def gen_polygon(polygon: list, new_polygon_list: list[np.ndarray], w: int, h: in
     return new_polygon
 
 def multi_image_augment(labelme_folder: str, json_list: list, num_img = 2):
+    """
+    Perform image augmentation by randomly selecting and transforming images.
+
+    Args:
+        labelme_folder (str): Path to the folder containing the LabelMe JSON files.
+        json_list (list): List of JSON filenames.
+        num_img (int): Number of images to augment.
+
+    Returns:
+        tuple: A tuple containing the new polygon list, width, height, and paths to the selected JSON files.
+    """
+    
     filenames = random.choices(json_list, k=num_img)
     json_paths = [os.path.join(labelme_folder, filename) for filename in filenames]
 
